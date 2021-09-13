@@ -4,8 +4,8 @@ import SpringBeanClass.entity.User;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Repository
 public class UserDaoImpl implements UserDao {
+    private final DataSource dataSource;
     private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
     /**
      * All queries that will execute to the database.
@@ -25,6 +26,10 @@ public class UserDaoImpl implements UserDao {
     private static final String QUERY_FIND_BY_LOGIN = "SELECT * FROM user where login = ?";
     private static final String QUERY_UPDATE_ADMIN_ROLE = " UPDATE user SET role = \"admin\" WHERE id=?";
     private static final String QUERY_UPDATE_USER_ROLE = " UPDATE user SET role = \"user\" WHERE id=?";
+
+    public UserDaoImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Override
     public User createUser(User user, Connection connection) throws DaoException {

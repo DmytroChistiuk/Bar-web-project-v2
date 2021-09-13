@@ -2,6 +2,7 @@ package SpringBeanClass.service;
 
 import SpringBeanClass.dao.CocktailIngredientDaoImpl;
 import SpringBeanClass.entity.Cocktail;
+import SpringBeanClass.util.MySQLUtil;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,6 @@ import java.util.List;
  */
 @Service
 public class CocktailIngredientServiceImpl implements CocktailIngredientService {
-    @Autowired
-    private  DataSource dataSource;
     private static final Logger logger = Logger.getLogger(CocktailIngredientServiceImpl.class);
     private final CocktailIngredientDaoImpl cocktailIngredientDaoImpl;
 
@@ -38,7 +37,7 @@ public class CocktailIngredientServiceImpl implements CocktailIngredientService 
      */
     @Override
     public List<Cocktail> getAllCocktailsByIngredientName(String name) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             HashMap<String, List<Cocktail>> currentMap = cocktailIngredientDaoImpl.findAllCocktailsByIngredientName(name, connection);
             return currentMap.get(name);
         } catch (SQLException e) {
@@ -55,7 +54,7 @@ public class CocktailIngredientServiceImpl implements CocktailIngredientService 
      */
     @Override
     public void setChainCocktailIngredient(int cocktailId, int ingredientId) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             cocktailIngredientDaoImpl.create(cocktailId, ingredientId, connection);
         } catch (SQLException e) {
             logger.error("Failed to set chain cocktailID -> ingredientID", e);

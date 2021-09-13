@@ -2,6 +2,7 @@ package SpringBeanClass.service;
 
 import SpringBeanClass.dao.IngredientDaoImpl;
 import SpringBeanClass.entity.Ingredient;
+import SpringBeanClass.util.MySQLUtil;
 import org.apache.log4j.Logger;
 
 import org.springframework.stereotype.Service;
@@ -20,16 +21,14 @@ import java.util.List;
 public class IngredientServiceImpl implements IngredientService{
     private final IngredientDaoImpl ingredientDaoImpl;
     private static final Logger logger = Logger.getLogger(IngredientServiceImpl.class);
-    private final DataSource dataSource;
-    public IngredientServiceImpl(IngredientDaoImpl ingredientDaoImpl, DataSource dataSource) {
+    public IngredientServiceImpl(IngredientDaoImpl ingredientDaoImpl) {
         this.ingredientDaoImpl = ingredientDaoImpl;
-        this.dataSource = dataSource;
     }
     @Override
     public Ingredient create(String name) throws ServiceException {
         Ingredient ingredient = new Ingredient();
         ingredient.setName(name);
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return ingredientDaoImpl.createIngredient(ingredient, connection);
         } catch (SQLException e) {
             logger.error("Failed to create ingredient", e);
@@ -38,7 +37,7 @@ public class IngredientServiceImpl implements IngredientService{
     }
     @Override
     public Ingredient getById(int id) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return ingredientDaoImpl.findById(id, connection);
         } catch (SQLException e) {
             logger.error("Failed to get ingredient by id", e);
@@ -47,7 +46,7 @@ public class IngredientServiceImpl implements IngredientService{
     }
     @Override
     public Ingredient getByName(String name) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return ingredientDaoImpl.findByName(name, connection);
         } catch (SQLException e) {
             logger.error("Failed to get ingredient by name", e);
@@ -56,7 +55,7 @@ public class IngredientServiceImpl implements IngredientService{
     }
     @Override
     public List<Ingredient> findAll() throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return ingredientDaoImpl.findAllIngredients(connection);
         } catch (SQLException e) {
             logger.error("Failed to find all ingredients", e);

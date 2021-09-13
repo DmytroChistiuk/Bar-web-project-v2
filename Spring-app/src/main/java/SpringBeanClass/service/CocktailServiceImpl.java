@@ -2,6 +2,7 @@ package SpringBeanClass.service;
 
 import SpringBeanClass.dao.CocktailDaoImpl;
 import SpringBeanClass.entity.Cocktail;
+import SpringBeanClass.util.MySQLUtil;
 import org.apache.log4j.Logger;
 
 
@@ -20,18 +21,16 @@ import java.util.List;
 @Service
 public class CocktailServiceImpl implements CocktailService {
     private final CocktailDaoImpl cocktailDAOImpl;
-    private final DataSource dataSource;
     private static final Logger logger = Logger.getLogger(CocktailServiceImpl.class);
 
-    public CocktailServiceImpl(CocktailDaoImpl cocktailDAOImpl, DataSource dataSource) {
+    public CocktailServiceImpl(CocktailDaoImpl cocktailDAOImpl) {
         this.cocktailDAOImpl = cocktailDAOImpl;
-        this.dataSource = dataSource;
     }
 
 
     @Override
     public void delete(int id) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             cocktailDAOImpl.deleteCocktail(id, connection);
         } catch (SQLException e) {
             logger.error("Failed to delete cocktail", e);
@@ -48,7 +47,7 @@ public class CocktailServiceImpl implements CocktailService {
         cocktail.setCocktailHistory(cocktailHistory);
         cocktail.setCocktailIcon(icon);
         cocktail.setCocktailPhoto(photo);
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return cocktailDAOImpl.createCocktail(cocktail, connection);
         } catch (SQLException e) {
             logger.error("Failed to create cocktail", e);
@@ -58,7 +57,7 @@ public class CocktailServiceImpl implements CocktailService {
 
     @Override
     public Cocktail getById(int id) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return cocktailDAOImpl.findById(id, connection);
         } catch (SQLException e) {
             logger.error("Failed to get cocktail by id", e);
@@ -68,7 +67,7 @@ public class CocktailServiceImpl implements CocktailService {
 
     @Override
     public Cocktail getByName(String name) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return cocktailDAOImpl.findByName(name, connection);
         } catch (SQLException e) {
             logger.error("Failed to get cocktail by name", e);
@@ -78,7 +77,7 @@ public class CocktailServiceImpl implements CocktailService {
 
     @Override
     public List<Cocktail> findAll() throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return cocktailDAOImpl.findAllCocktails(connection);
         } catch (SQLException e) {
             logger.error("Failed to find all cocktails", e);

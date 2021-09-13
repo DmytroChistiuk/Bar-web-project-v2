@@ -3,6 +3,7 @@ package SpringBeanClass.service;
 import SpringBeanClass.dao.UserBarDaoImpl;
 import SpringBeanClass.entity.Cocktail;
 import SpringBeanClass.entity.User;
+import SpringBeanClass.util.MySQLUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +21,13 @@ import java.util.List;
 public class UserBarServiceImpl implements UserBarService {
     private static final Logger logger = Logger.getLogger(UserBarServiceImpl.class);
     private final UserBarDaoImpl userBarDaoImpl;
-    private final DataSource dataSource;
-    public UserBarServiceImpl(UserBarDaoImpl userBarDaoImpl, DataSource dataSource) {
+    public UserBarServiceImpl(UserBarDaoImpl userBarDaoImpl) {
         this.userBarDaoImpl = userBarDaoImpl;
-        this.dataSource = dataSource;
     }
 
     @Override
     public Cocktail addCocktail(int id, Cocktail cocktail) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return userBarDaoImpl.addCocktailToUserBar(id, cocktail, connection);
         } catch (SQLException e) {
             logger.error("Failed to add cocktail to user's bar", e);
@@ -44,7 +43,7 @@ public class UserBarServiceImpl implements UserBarService {
      */
     @Override
     public List<Cocktail> getUserBar(int id) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return userBarDaoImpl.findAllCocktailByUserBarId(id, connection);
         } catch (SQLException e) {
             logger.error("Failed to get user's bar", e);
@@ -54,7 +53,7 @@ public class UserBarServiceImpl implements UserBarService {
 
     @Override
     public Cocktail deleteCocktail(Cocktail cocktail, User user) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             userBarDaoImpl.deleteCocktailFromUserBar(cocktail.getCocktailName(), user.getId(), connection);
         } catch (SQLException e) {
             logger.error("Failed to delete cocktail from user's bar", e);
@@ -78,7 +77,7 @@ public class UserBarServiceImpl implements UserBarService {
 
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            connection = MySQLUtil.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }

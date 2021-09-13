@@ -2,6 +2,7 @@ package SpringBeanClass.service;
 
 import SpringBeanClass.dao.UserDaoImpl;
 import SpringBeanClass.entity.User;
+import SpringBeanClass.util.MySQLUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,9 @@ import static SpringBeanClass.util.Sha256Encryption.getSha256;
 public class UserServiceImpl implements UserService {
     private static final Logger logger = Logger.getLogger(UserBarServiceImpl.class);
     private final UserDaoImpl userDaoImpl;
-    private final DataSource dataSource;
 
-    public UserServiceImpl(UserDaoImpl userDaoImpl, DataSource dataSource) {
+    public UserServiceImpl(UserDaoImpl userDaoImpl) {
         this.userDaoImpl = userDaoImpl ;
-        this.dataSource = dataSource;
     }
 
     @Override
@@ -37,7 +36,7 @@ public class UserServiceImpl implements UserService {
         user.setLogin(login);
         user.setPassword(getSha256(password));
         user.setRole("user");
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return userDaoImpl.createUser(user, connection);
         } catch (SQLException e) {
             logger.error("Failed to create new user", e);
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getByUserLogin(String username) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return userDaoImpl.findByLogin(username, connection);
         } catch (SQLException e) {
             logger.error("Failed to get user by login", e);
@@ -57,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(int id) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return userDaoImpl.findById(id, connection);
         } catch (SQLException e) {
             logger.error("Failed to get user by id", e);
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAll() throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             return userDaoImpl.findAll(connection);
         } catch (SQLException e) {
             logger.error("Failed to get all users", e);
@@ -77,7 +76,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setAdminRole(int id) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             userDaoImpl.setAdminRole(id, connection);
         } catch (SQLException e) {
             logger.error("Failed to set admin role", e);
@@ -87,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setUserRole(int id) throws ServiceException {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = MySQLUtil.getConnection()) {
             userDaoImpl.setUserRole(id, connection);
         } catch (SQLException e) {
             logger.error("Failed to set user role", e);
