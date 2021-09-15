@@ -15,7 +15,8 @@ import java.util.List;
  */
 @Repository
 public class UserDaoImpl implements UserDao {
-    private final DataSource dataSource;
+    private  final  DataSource dataSource ;
+
     private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
     /**
      * All queries that will execute to the database.
