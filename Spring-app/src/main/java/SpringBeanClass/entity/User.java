@@ -2,17 +2,26 @@ package SpringBeanClass.entity;
 
 import org.springframework.stereotype.Component;
 
+import javax.persistence.*;
 import java.util.Objects;
 /**
  * This entity is associated with the table "user" in the database.
  */
-@Component
+@Entity
+@Table(name = "user")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "surname")
     private String surname;
+    @Column(name = "login")
     private String login;
+    @Column(name = "password")
     private String password;
+    @Column(name = "role")
     private String role;
 
     public int getId() {
